@@ -1,6 +1,7 @@
 import argparse
 from git_utils import get_git_status, get_git_diff, mask_sensitive_info
 from ai_client import generate_text
+from validators import validate_commit_title
 
 def parse_args():
     parser = argparse.ArgumentParser(description="AI 기반 커밋/PR 생성기")
@@ -36,18 +37,31 @@ def main():
 
     if args.command == "commit":
         prompt = f"다음 git diff를 보고 커밋 메시지를 작성해줘:\n{diff_text}"
+        system_prompt = "마크다운 문법(##, ```, ** 등)을 쓰지 말고 순수 텍스트로만 답해줘. 첫 줄에는 커밋 제목만 쓰고, 그 다음 줄부터 본문을 써줘. "
 
     elif args.command == "pr":
         prompt = f"다음 git diff를 보고 PR 제목과 Why/What/How to Test 구조로 본문을 작성해줘:\n{diff_text}"
+        system_prompt = "마크다운 문법(##, ```, ** 등)을 쓰지 말고 순수 텍스트로만 답해줘. 첫 줄에는 PR 제목만 쓰고, 그 다음 Why, What, How to Test 섹션을 순서대로 써줘. 각 섹션에는 최소 1개 이상의 불릿을 포함해줘."
 
     result = generate_text(
         prompt,
+        system_prompt=system_prompt,
         model=args.model,
         temperature=args.temperature,
         max_tokens=args.max_tokens,
     )
 
-    print(result)
+    lines = result.split("\n")
+    title = lines[0]
+    body = "\n".join(lines[1:])
+
+    if args.command == "commit":
+        title = validate_commit_title(title)
+
+    print("--- 결과 ---")
+    print(title)
+    print(body)
+    print("-----------")
 
 if __name__ == "__main__":
     main()
