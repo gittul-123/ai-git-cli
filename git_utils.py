@@ -1,4 +1,5 @@
 import subprocess
+# 테스트용 주석
 
 def get_git_status():
     result = subprocess.run(["git", "status"], capture_output=True, text=True)
