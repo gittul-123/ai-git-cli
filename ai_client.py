@@ -26,8 +26,3 @@ def generate_text(prompt, system_prompt="", model="claude-sonnet-4", max_tokens=
     )
 
     return response.json()["content"][0]["text"]
-
-
-if __name__ == "__main__":
-    result = generate_text("안녕하세요, 짧게 인사해줘")
-    print(result)
