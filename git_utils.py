@@ -2,11 +2,11 @@ import subprocess
 import re
 
 def get_git_status():
-    result = subprocess.run(["git", "status"], capture_output=True, text=True)
+    result = subprocess.run(["git", "status"], capture_output=True, text=True, encoding="utf-8")
     return result.stdout
 
 def get_git_diff():
-    result = subprocess.run(["git", "diff"], capture_output=True, text=True)
+    result = subprocess.run(["git", "diff"], capture_output=True, text=True, encoding="utf-8")
     return result.stdout
 
 def mask_sensitive_info(text):

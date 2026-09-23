@@ -63,6 +63,7 @@ def main():
         body = validate_pr_body(body)
 
     print("--- 결과 ---")
+    print("[주의] 아래 내용은 AI가 생성한 초안입니다. 검토 후 적용해주세요.")
     print(title)
     print(body)
     print("-----------")
