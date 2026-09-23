@@ -51,6 +51,11 @@ def main():
         max_tokens=args.max_tokens,
     )
 
+    if not result:
+        print("AI 응답 생성에 실패했습니다.")
+        return
+
+
     lines = result.split("\n")
     title = lines[0]
     body = "\n".join(lines[1:])

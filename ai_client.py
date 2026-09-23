@@ -10,19 +10,27 @@ def generate_text(prompt, system_prompt="", model="claude-sonnet-4", max_tokens=
         print("[ERROR] AI_API_KEY 환경변수가 설정되지 않았습니다.")
         return None
 
-    response = requests.post(
-        BASE_URL,
-        headers={
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-        },
-        json={
-            "model": model,
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "system": system_prompt,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-    )
-
-    return response.json()["content"][0]["text"]
+    try:
+        response = requests.post(
+            BASE_URL,
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+            },
+            json={
+                "model": model,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "system": system_prompt,
+                "messages": [{"role": "user", "content": prompt}],
+            },
+        )
+        return response.json()["content"][0]["text"]
+    
+    except requests.exceptions.RequestException as e:
+        print(f"[ERROR] 네트워크 오류가 발생했습니다: {e}")
+        return None
+    
+    except (KeyError, IndexError) as e:
+        print(f"[ERROR] 예상치 못한 응답 형식입니다: {e}")
+        return None
