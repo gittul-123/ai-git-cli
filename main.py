@@ -1,7 +1,7 @@
 import argparse
 from git_utils import get_git_status, get_git_diff, mask_sensitive_info
 from ai_client import generate_text
-from validators import validate_commit_title, validate_pr_title, validate_pr_body
+from validators import validate_commit_title, validate_commit_body, validate_pr_title, validate_pr_body
 
 def parse_args():
     parser = argparse.ArgumentParser(description="AI 기반 커밋/PR 생성기")
@@ -62,6 +62,7 @@ def main():
 
     if args.command == "commit":
         title = validate_commit_title(title)
+        body = validate_commit_body(body)
 
     elif args.command == "pr":
         title = validate_pr_title(title)
