@@ -1,7 +1,7 @@
 import argparse
 from git_utils import get_git_status, get_git_diff, mask_sensitive_info
 from ai_client import generate_text
-from validators import validate_commit_title, validate_commit_body, validate_pr_title, validate_pr_body
+from validators import validate_commit_title, validate_commit_body, validate_pr_title, validate_pr_body, find_missing_pr_sections
 
 def parse_args():
     parser = argparse.ArgumentParser(description="AI 기반 커밋/PR 생성기")
@@ -59,6 +59,20 @@ def main():
         print("AI 응답 생성에 실패했습니다.")
         return
 
+    if args.command == "pr":
+        missing = find_missing_pr_sections(result)
+        if missing:
+            print(f"[INFO] 누락된 섹션 {missing} 감지: AI에 1회 재요청합니다. (호출 총 2회)")
+            retry_prompt = prompt + f"\n\n반드시 {', '.join(missing)} 섹션을 포함해서 다시 작성해줘."
+            retry_result = generate_text(
+                retry_prompt,
+                system_prompt=system_prompt,
+                model=args.model,
+                temperature=args.temperature,
+                max_tokens=args.max_tokens,
+            )
+            if retry_result:
+                result = retry_result
 
     lines = result.split("\n")
     title = lines[0]
