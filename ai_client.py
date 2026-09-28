@@ -25,6 +25,11 @@ def generate_text(prompt, system_prompt="", model="claude-sonnet-4", max_tokens=
                 "messages": [{"role": "user", "content": prompt}],
             },
         )
+
+        if response.status_code != 200:
+            print(f"[ERROR] API 호출 실패 (상태 코드 : {response.status_code}): {response.text}")
+            return None
+
         return response.json()["content"][0]["text"]
     
     except requests.exceptions.RequestException as e:
