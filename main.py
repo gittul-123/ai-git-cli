@@ -26,6 +26,10 @@ def parse_args():
 def main():
     args = parse_args()
 
+    status_text = get_git_status()
+    changed_count = len(status_text.strip().splitlines())
+    print(f"[INFO] Git status 수집 완료: {changed_count}개 파일 변경 감지")
+
     diff_text = get_git_diff()
 
     if args.safe_mode:
